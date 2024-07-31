@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grafici Interattivi</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            box-sizing: border-box;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .chart-wrapper {
+            margin-bottom: 40px;
+        }
+        .chart-description {
+            font-size: 1em;
+            color: #555;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            clear: both;
+            line-height: 1.5; /* Mejora la legibilidad del texto */
+        }
+        .chart-wrapper h2 {
+            text-align: center;
+            margin: 0;
+            font-size: 1.5em;
+            color: #333;
+        }
+        @media (max-width: 600px) {
+            .chart-description {
+                font-size: 0.9em;
+                margin-top: 15px;
+            }
+            #bar-chart, #line-chart {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Grafici Interattivi</h1>
+
+    <div class="container">
+        <div class="chart-wrapper">
+            <h2>Grafico a Barre Comparativo</h2>
+            <div id="bar-chart" style="width:100%; height:400px;"></div>
+            <div class="chart-description">
+                Questo grafico a barre comparativo permette di confrontare il numero di interventi effettuati nel 2023 con quelli del 2024, suddivisi per tipologia di intervento. Le barre rappresentano:
+                <ul>
+                    <li><strong>Anno 2023:</strong> I dati relativi al numero di interventi per ciascuna tipologia durante l'anno 2023.</li>
+                    <li><strong>Anno 2024 (Equipe Sarro):</strong> I dati relativi al numero di interventi per ciascuna tipologia durante l'anno 2024 per l'équipe del Dr. Sarro.</li>
+                    <li><strong>Anno 2024 (Equipe Frattini):</strong> I dati relativi al numero di interventi per ciascuna tipologia durante l'anno 2024 per l'équipe del Dr. Frattini.</li>
+                    <li><strong>Anno 2024 (Totale):</strong> La somma dei dati degli interventi per entrambe le equipe nel 2024, offrendo una visione complessiva del totale degli interventi.</li>
+                </ul>
+                Il grafico consente di visualizzare facilmente le differenze tra gli anni e le varie equipe, evidenziando i cambiamenti e le tendenze nelle tipologie di intervento.
+            </div>
+        </div>
+
+        <div class="chart-wrapper">
+            <h2>Grafico a Linee</h2>
+            <div id="line-chart" style="width:100%; height:400px;"></div>
+            <div class="chart-description">
+                Questo grafico a linee mostra l'andamento degli interventi nel 2023 e nel 2024, suddivisi per tipologia. Le linee rappresentano i seguenti dati:
+                <ul>
+                    <li><strong>Anno 2023:</strong> Dati del 2023 per ogni tipologia di intervento.</li>
+                    <li><strong>Anno 2024 (Equipe Sarro):</strong> Andamento degli interventi per l'équipe del Dr. Sarro nel 2024.</li>
+                    <li><strong>Anno 2024 (Equipe Frattini):</strong> Andamento degli interventi per l'équipe del Dr. Frattini nel 2024.</li>
+                    <li><strong>Anno 2024 (Totale):</strong> Andamento totale degli interventi per entrambe le equipe nel 2024.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dati
+        const tipologiaInterventi = [
+            "SLEEVE GASTRECTOMY", "ENDOSLEEVE", "BY PASS (Vari tipi)",
+            "BICLAMP", "GASTRIC BANDING", "RIMOZIONE BENDAGGI",
+            "IATOPLASTICHE TOUPET", "COLECISTECTOMIE VLC", 
+            "LAPAROCELI e ERNIE VENTRALI Laparoscopiche", "ERNIOPLASTICHE INGUINALI",
+            "INTERVENTI su EMORROIDI", "RESEZIONI COLON e GASTRORESEZIONI",
+            "NEOF Mammella", "Varie"
+        ];
+
+        const dati2023 = [222, 3, 15, 10, 6, 20, 10, 78, 40, 50, 50, 2, 2, 22];
+        const dati2024Sarro = [160, 3, 23, 1, 4, 20, 22, 55, 22, 58, 49, 5, 4, 20];
+        const dati2024Frattini = [53, 3, 1, 0, 0, 2, 0, 6, 7, 4, 26, 0, 0, 0];
+        const dati2024Totale = dati2024Sarro.map((x, i) => x + dati2024Frattini[i]);
+
+        // Grafico a Barre Comparativo
+        const barChartData = [
+            {
+                x: tipologiaInterventi,
+                y: dati2023,
+                type: 'bar',
+                name: 'Anno 2023',
+                marker: { color: 'indianred' }
+            },
+            {
+                x: tipologiaInterventi,
+                y: dati2024Sarro,
+                type: 'bar',
+                name: 'Anno 2024 (Equipe Sarro)',
+                marker: { color: 'lightsalmon' }
+            },
+            {
+                x: tipologiaInterventi,
+                y: dati2024Frattini,
+                type: 'bar',
+                name: 'Anno 2024 (Equipe Frattini)',
+                marker: { color: 'lightblue' }
+            },
+            {
+                x: tipologiaInterventi,
+                y: dati2024Totale,
+                type: 'bar',
+                name: 'Anno 2024 (Totale)',
+                marker: { color: 'lightgreen' }
+            }
+        ];
+
+        const barChartLayout = {
+            title: 'Confronto Interventi 2023 vs 2024',
+            xaxis: {
+                tickangle: -45,
+                title: 'Tipologia di Intervento',
+                title_standoff: 25,
+                tickfont: { size: 10 }, // Ridurre la dimensione del font per le etichette
+                automargin: true // Abilitare il margine automatico per evitare il taglio delle etichette
+            },
+            yaxis: { title: 'Numero di Interventi' },
+            barmode: 'group',
+            margin: { t: 60, b: 120, l: 60, r: 20 }
+        };
+
+        Plotly.newPlot('bar-chart', barChartData, barChartLayout);
+
+        // Grafico a Linee
+        const lineChartData = [
+            {
+                x: tipologiaInterventi,
+                y: dati2023,
+                mode: 'lines+markers',
+                name: 'Anno 2023',
+                line: { color: 'firebrick', width: 2 }
+            },
+            {
+                x: tipologiaInterventi,
+                y: dati2024Sarro,
+                mode: 'lines+markers',
+                name: 'Anno 2024 (Equipe Sarro)',
+                line: { color: 'royalblue', width: 2 }
+            },
+            {
+                x: tipologiaInterventi,
+                y: dati2024Frattini,
+                mode: 'lines+markers',
+                name: 'Anno 2024 (Equipe Frattini)',
+                line: { color: 'lightgreen', width: 2 }
+            },
+            {
+                x: tipologiaInterventi,
+                y: dati2024Totale,
+                mode: 'lines+markers',
+                name: 'Anno 2024 (Totale)',
+                line: { color: 'purple', width: 2 }
+            }
+        ];
+
+        const lineChartLayout = {
+            title: 'Andamento Interventi 2023 vs 2024',
+            xaxis: {
+                title: 'Tipologia di Intervento',
+                title_standoff: 25,
+                tickfont: { size: 10 }, // Ridurre la dimensione del font per le etichette
+                automargin: true // Abilitare il margine automatico per evitare il taglio delle etichette
+            },
+            yaxis: { title: 'Numero di Interventi' },
+            margin: { t: 60, b: 120, l: 60, r: 20 }
+        };
+
+        Plotly.newPlot('line-chart', lineChartData, lineChartLayout);
+    </script>
+</body>
+</html>
